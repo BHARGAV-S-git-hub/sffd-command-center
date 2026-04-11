@@ -4,9 +4,9 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const host = process.env.DATABRICKS_HOST;
-    const path = process.env.DATABRICKS_PATH;
-    const token = process.env.DATABRICKS_TOKEN;
+    const host = "dbc-c0df26d7-b728.cloud.databricks.com";
+    const path = "/sql/1.0/warehouses/f125ebbd74c6efe5";
+    const token = "dapi775eabac978712a4e8293d48088e7a80";
 
     if (!host || !path || !token) {
       console.error("Missing AWS Environment Variables");
