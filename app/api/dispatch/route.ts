@@ -1,51 +1,78 @@
 import { NextResponse } from 'next/server';
-import { DBSQLClient } from '@databricks/sql';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  // 1. Strict Environment Variable Check - UPDATED TO MATCH YOUR .ENV
-  const host = process.env.DATABRICKS_SERVER_HOSTNAME; 
-  const path = process.env.DATABRICKS_HTTP_PATH;
-  const token = process.env.DATABRICKS_TOKEN;
-
-  if (!host || !path || !token) {
-    console.error("Missing Databricks configuration. Check .env.local");
-    return NextResponse.json(
-      { error: "Server configuration error." }, 
-      { status: 500 }
-    );
-  }
-
-  const client = new DBSQLClient();
-
   try {
-    // 2. Connect using the validated credentials
-    await client.connect({
-      host: host,
-      path: path,
-      token: token,
-    });
+    const host = process.env.DATABRICKS_HOST;
+    const path = process.env.DATABRICKS_PATH;
+    const token = process.env.DATABRICKS_TOKEN;
 
-    const session = await client.openSession();
+    if (!host || !path || !token) {
+      console.error("Missing AWS Environment Variables");
+      return NextResponse.json({ error: "Missing keys" }, { status: 500 });
+    }
 
-    // The Golden Query: Now pulling from Akash's ML Engine
+    // The path usually looks like /sql/1.0/warehouses/12345abcd
+    // We need just the warehouse ID at the very end
+    const warehouseId = path.split('/').pop();
+
+    // Format the base URL correctly
+    const baseUrl = host.startsWith('http') ? host : `https://${host}`;
+    const apiUrl = `${baseUrl}/api/2.0/sql/statements`;
+
     const query = `
       SELECT * FROM cobratech.default.gold_web_live_engine 
       WHERE latitude IS NOT NULL
     `;
 
-    const queryOperation = await session.executeStatement(query);
-    const result = await queryOperation.fetchAll();
+    console.log("Sending query to Databricks REST API...");
 
-    await session.close();
-    await client.close();
+    // Send a standard HTTP POST request to Databricks
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        warehouse_id: warehouseId,
+        statement: query,
+        wait_timeout: "30s" // Wait for the query to finish before returning
+      }),
+    });
 
-    return NextResponse.json(result, { status: 200 });
+    const data = await response.json();
 
-  } catch (error) {
-    console.error("Databricks Connection FAILED:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch live data from Databricks." }, 
-      { status: 500 }
-    );
+    if (!response.ok) {
+      console.error("Databricks API Error:", data);
+      return NextResponse.json({ error: data.message || "Query failed" }, { status: response.status });
+    }
+
+    // Databricks REST API returns data as arrays (columns separate from rows)
+    // We need to map it back into an array of objects for your frontend to read
+    if (data.status && data.status.state === "SUCCEEDED" && data.result) {
+      const columns = data.result.schema.map((col: any) => col.name);
+      
+      const formattedData = data.result.data_array.map((rowArray: any[]) => {
+        let rowObject: any = {};
+        rowArray.forEach((value: any, index: number) => {
+          // Databricks REST API returns numbers as strings, so we parse them if needed
+          rowObject[columns[index]] = isNaN(value as any) ? value : Number(value);
+        });
+        return rowObject;
+      });
+
+      console.log("Success! Data fetched via REST API.");
+      return NextResponse.json(formattedData);
+
+    } else {
+      console.error("Query didn't succeed immediately:", data);
+      return NextResponse.json({ error: "Query pending or failed" }, { status: 500 });
+    }
+
+  } catch (error: any) {
+    console.error("Fetch Crash:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
