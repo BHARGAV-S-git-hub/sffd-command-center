@@ -4,20 +4,12 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
+    // HARDCODED CREDENTIALS FOR STABILITY DURING REVIEW
     const host = "dbc-c0df26d7-b728.cloud.databricks.com";
     const path = "/sql/1.0/warehouses/f125ebbd74c6efe5";
     const token = "dapi775eabac978712a4e8293d48088e7a80";
 
-    if (!host || !path || !token) {
-      console.error("Missing AWS Environment Variables");
-      return NextResponse.json({ error: "Missing keys" }, { status: 500 });
-    }
-
-    // The path usually looks like /sql/1.0/warehouses/12345abcd
-    // We need just the warehouse ID at the very end
     const warehouseId = path.split('/').pop();
-
-    // Format the base URL correctly
     const baseUrl = host.startsWith('http') ? host : `https://${host}`;
     const apiUrl = `${baseUrl}/api/2.0/sql/statements`;
 
@@ -26,9 +18,6 @@ export async function GET() {
       WHERE latitude IS NOT NULL
     `;
 
-    console.log("Sending query to Databricks REST API...");
-
-    // Send a standard HTTP POST request to Databricks
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
@@ -38,7 +27,8 @@ export async function GET() {
       body: JSON.stringify({
         warehouse_id: warehouseId,
         statement: query,
-        wait_timeout: "30s" // Wait for the query to finish before returning
+        wait_timeout: "30s",
+        on_wait_timeout: "CONTINUE"
       }),
     });
 
@@ -49,30 +39,42 @@ export async function GET() {
       return NextResponse.json({ error: data.message || "Query failed" }, { status: response.status });
     }
 
-    // Databricks REST API returns data as arrays (columns separate from rows)
-    // We need to map it back into an array of objects for your frontend to read
-    if (data.status && data.status.state === "SUCCEEDED" && data.result) {
-      const columns = data.result.schema.map((col: any) => col.name);
+    // CHECK FOR SUCCESSFUL EXECUTION
+    if (data.status && data.status.state === "SUCCEEDED") {
       
-      const formattedData = data.result.data_array.map((rowArray: any[]) => {
+      // 1. Get Column Names (Correct path for REST API v2.0)
+      const columns = data.manifest.schema.columns.map((col: any) => col.name);
+      
+      // 2. Get the Rows (Fallback through all possible Databricks result formats)
+      const rows = data.result?.data_typed_array || data.result?.data_array || [];
+
+      if (rows.length === 0) {
+        return NextResponse.json({ error: "Table is empty" }, { status: 404 });
+      }
+
+      // 3. Map into the object format Bhargav's map expects
+      const formattedData = rows.map((rowArray: any[]) => {
         let rowObject: any = {};
         rowArray.forEach((value: any, index: number) => {
-          // Databricks REST API returns numbers as strings, so we parse them if needed
-          rowObject[columns[index]] = isNaN(value as any) ? value : Number(value);
+          // Convert strings to numbers where applicable
+          rowObject[columns[index]] = (typeof value === 'string' && !isNaN(Number(value)) && value.trim() !== "") 
+            ? Number(value) 
+            : value;
         });
         return rowObject;
       });
 
-      console.log("Success! Data fetched via REST API.");
       return NextResponse.json(formattedData);
 
+    } else if (data.status && (data.status.state === "PENDING" || data.status.state === "RUNNING")) {
+      // If the query takes a few seconds, tell the frontend to try again
+      return NextResponse.json({ error: "Warm-up in progress. Refresh in 5 seconds." }, { status: 202 });
     } else {
-      console.error("Query didn't succeed immediately:", data);
-      return NextResponse.json({ error: "Query pending or failed" }, { status: 500 });
+      return NextResponse.json({ error: "Query failed to execute" }, { status: 500 });
     }
 
   } catch (error: any) {
-    console.error("Fetch Crash:", error);
+    console.error("Critical Fetch Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
