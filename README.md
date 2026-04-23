@@ -3,7 +3,7 @@ A **Predictive Enterprise Command Center** built to transform fire and emergency
 ## ⚠️ The Problem & Project Objective
 Most fire dispatch centers rely on reactive dashboards. Dispatchers wait for an incident to occur, look at a map, and deploy engines. By the time they react to high-volume events, the fleet is already exhausted, leading to catastrophic delays in critical zones. 
 
-**Project Objective:** To solve this, we were challenged to build an integrated data platform that synthesizes 14 days of analysis into a production-ready system supporting fire department strategic planning, proactive compliance, and resource optimization.
+**Project Objective:** To solve this, we were challenged to build an integrated data platform that synthesizes dataset into a production-ready system supporting fire department strategic planning, proactive compliance, and resource optimization.
 
 ## 💡 The Solution
 We built a predictive tactical dispatch engine backed by a **live Databricks Machine Learning pipeline**. It doesn't just show where fires are right now; it forecasts fleet exhaustion hours into the future, stress-tests capacity against environmental hazards, and allows dispatchers to simulate deployments in real-time before issuing actual commands.
