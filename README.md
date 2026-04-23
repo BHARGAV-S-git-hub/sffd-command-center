@@ -33,7 +33,7 @@ Client-side "What-If" scenario modeling. Dispatchers can click **"Add Engine"** 
 ### Backend & Data Pipeline
 * **Backend API:** Next.js API Routes utilizing pure `fetch()` REST API calls for serverless-friendly deployment.
 * **Machine Learning & Data Warehouse:** Databricks SQL Warehouse (Medallion Architecture pulling from the `gold_web_live_engine` table).
-* **Hosting / CI-CD:** AWS Amplify with automated GitHub webhook deployments.
+* **Hosting:** https://cobratech.dev/
 
 ---
 
