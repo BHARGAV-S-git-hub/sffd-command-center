@@ -1,14 +1,16 @@
 A **Predictive Enterprise Command Center** built to transform fire and emergency dispatching from a reactive process into a proactive, machine-learning-driven simulation engine.
 
-## ⚠️ The Problem
-Most fire dispatch centers rely on reactive dashboards. Dispatchers wait for an incident to occur, look at a map, and deploy engines. By the time they react to high-volume events, the fleet is already exhausted, leading to catastrophic delays in critical zones.
+## ⚠️ The Problem & Project Objective
+Most fire dispatch centers rely on reactive dashboards. Dispatchers wait for an incident to occur, look at a map, and deploy engines. By the time they react to high-volume events, the fleet is already exhausted, leading to catastrophic delays in critical zones. 
+
+**Project Objective:** To solve this, we were challenged to build an integrated data platform that synthesizes 14 days of analysis into a production-ready system supporting fire department strategic planning, proactive compliance, and resource optimization.
 
 ## 💡 The Solution
 We built a predictive tactical dispatch engine backed by a **live Databricks Machine Learning pipeline**. It doesn't just show where fires are right now; it forecasts fleet exhaustion hours into the future, stress-tests capacity against environmental hazards, and allows dispatchers to simulate deployments in real-time before issuing actual commands.
 
 ---
 
-## ✨ Core Features ("God-Tier" Capabilities)
+## ✨ Core Features
 
 ### 1. 🌪️ Environmental Stress-Testing
 A simulation engine that allows dispatchers to inject dynamic real-world variables (e.g., High Winds, Earthquakes). The frontend immediately applies risk multipliers, recalculating the safety metrics of the entire city and visually flagging newly vulnerable zones.
