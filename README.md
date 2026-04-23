@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+A **Predictive Enterprise Command Center** built to transform fire and emergency dispatching from a reactive process into a proactive, machine-learning-driven simulation engine.
 
-## Getting Started
+## ⚠️ The Problem
+Most fire dispatch centers rely on reactive dashboards. Dispatchers wait for an incident to occur, look at a map, and deploy engines. By the time they react to high-volume events, the fleet is already exhausted, leading to catastrophic delays in critical zones.
 
-First, run the development server:
+## 💡 The Solution
+We built a predictive tactical dispatch engine backed by a **live Databricks Machine Learning pipeline**. It doesn't just show where fires are right now; it forecasts fleet exhaustion hours into the future, stress-tests capacity against environmental hazards, and allows dispatchers to simulate deployments in real-time before issuing actual commands.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Core Features ("God-Tier" Capabilities)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 1. 🌪️ Environmental Stress-Testing
+A simulation engine that allows dispatchers to inject dynamic real-world variables (e.g., High Winds, Earthquakes). The frontend immediately applies risk multipliers, recalculating the safety metrics of the entire city and visually flagging newly vulnerable zones.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 2. ⏳ Temporal Forecasting Engine ("Time Travel")
+A predictive time slider (+0 to +12 hours) that runs a mathematical decay algorithm based on current incident loads. It shows exactly when and where fleet exhaustion will occur if no action is taken.
 
-## Learn More
+### 3. 🧠 ML Optimization Directives (AI Override)
+An intelligent system that constantly scans Databricks data to find the district in the worst `DEFICIT` and the safest `SURPLUS`. It generates natural language directives, prompting the dispatcher to execute an optimized engine transfer.
 
-To learn more about Next.js, take a look at the following resources:
+### 4. 🎛️ Interactive Deployment Simulation
+Client-side "What-If" scenario modeling. Dispatchers can click **"Add Engine"** on any active battalion to intercept the ML data, simulate a drop in risk probability, and synchronously update the Leaflet map and Recharts graphs without a page reload.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ Technical Architecture & Stack
 
-## Deploy on Vercel
+### Frontend (User Interface)
+* **Framework:** Next.js (App Router) & React
+* **Styling:** Tailwind CSS combined with a custom "Obsidian & Titanium" defense-contractor aesthetic (Glassmorphism, restricted functional colors, `JetBrains Mono` typography).
+* **Geospatial Mapping:** `react-leaflet` (CARTO Dark Matter basemaps) rendered dynamically to avoid SSR hydration mismatches.
+* **Data Visualization:** `recharts` for dynamic, data-bound probability matrices.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Backend & Data Pipeline
+* **Backend API:** Next.js API Routes utilizing pure `fetch()` REST API calls for serverless-friendly deployment.
+* **Machine Learning & Data Warehouse:** Databricks SQL Warehouse (Medallion Architecture pulling from the `gold_web_live_engine` table).
+* **Hosting / CI-CD:** AWS Amplify with automated GitHub webhook deployments.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🚀 Running the Project Locally
+
+### Prerequisites
+* Node.js 18+
+* A Databricks Workspace with an active SQL Warehouse.
