@@ -8,17 +8,17 @@ We built a predictive tactical dispatch engine backed by a **live Databricks Mac
 
 ## ✨ Core Features
 
-### 1. 🌪️ Environmental Stress-Testing
-A simulation engine that allows dispatchers to inject dynamic real-world variables (e.g., High Winds, Earthquakes). The frontend immediately applies risk multipliers, recalculating the safety metrics of the entire city and visually flagging newly vulnerable zones.
-
-### 2. ⏳ Temporal Forecasting Engine ("Time Travel")
-A predictive time slider (+0 to +12 hours) that runs a mathematical decay algorithm based on current incident loads. It shows exactly when and where fleet exhaustion will occur if no action is taken.
-
-### 3. 🧠 ML Optimization Directives (AI Override)
+### 1. 🧠 ML Optimization Directives (AI Override)
 An intelligent system that constantly scans Databricks data to find the district in the worst `DEFICIT` and the safest `SURPLUS`. It generates natural language directives, prompting the dispatcher to execute an optimized engine transfer.
 
-### 4. 🎛️ Interactive Deployment Simulation
+### 2. 🎛️ Interactive Deployment Simulation
 Client-side "What-If" scenario modeling. Dispatchers can click **"Add Engine"** on any active battalion to intercept the ML data, simulate a drop in risk probability, and synchronously update the Leaflet map and Recharts graphs without a page reload.
+
+### 3. 🌪️ Environmental Stress-Testing
+A simulation engine that allows dispatchers to inject dynamic real-world variables (e.g., High Winds, Earthquakes). The frontend immediately applies risk multipliers, recalculating the safety metrics of the entire city and visually flagging newly vulnerable zones.
+
+### 4. ⏳ Temporal Forecasting Engine ("Time Travel")
+A predictive time slider (+0 to +12 hours) that runs a mathematical decay algorithm based on current incident loads. It shows exactly when and where fleet exhaustion will occur if no action is taken.
 
 ---
 
